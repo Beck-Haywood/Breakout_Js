@@ -31,19 +31,31 @@ const objectColor = '#0095DD';
 const gameOverMessage = 'Game Over';
 const gameWonMessage = 'YOU WIN, CONGRATULATIONS!';
 const font = '16px Arial';
+const ball = {
+  x: 0,
+  y: 0,
+  dx: 0,
+  dy: 0,
+  radius: ballRadius,
+  move() {
+    this.x += this.dx;
+    this.y += this.dy;
+  },
+  draw(canvasContext) {
+    canvasContext.beginPath();
+    canvasContext.arc(this.x, this.y, this.radius, 0, PI2);
+    canvasContext.fillStyle = objectColor;
+    canvasContext.fill();
+    canvasContext.closePath();
+  },
+};
+//
 
 // --------------------------------------------------------------
 // Variables
 // --------------------------------------------------------------
 
 let paddleX;
-
-let ball = {
-  x: 0,
-  y: 0,
-  dx: 0,
-  dy: 0,
-};
 
 resetBallAndPaddle();
 
@@ -63,14 +75,6 @@ setupBricks();
 // **************************************************************
 // Functions
 // **************************************************************
-
-function drawBall() {
-  ctx.beginPath();
-  ctx.arc(ball.x, ball.y, ballRadius, 0, PI2);
-  ctx.fillStyle = objectColor;
-  ctx.fill();
-  ctx.closePath();
-}
 
 function drawPaddle() {
   ctx.beginPath();
@@ -141,12 +145,6 @@ function resetBallAndPaddle() {
   paddleX = paddleXStart;
 }
 
-function moveBall() {
-  // Move Ball
-  ball.x += ball.dx;
-  ball.y += ball.dy;
-}
-
 function movePaddle() {
   // Check for arrow keys
   if (rightPressed && paddleX < canvasWidth - paddleWidth) {
@@ -158,15 +156,15 @@ function movePaddle() {
 
 function collisionsWithCanvasAndPaddle() {
   // Bounce the ball off the left and right of the canvas
-  if (ball.x + ball.dx > canvasWidth - ballRadius || ball.x + ball.dx < ballRadius) {
+  if (ball.x + ball.dx > canvasWidth - ball.radius || ball.x + ball.dx < ball.radius) {
     ball.dx = -ball.dx;
   }
 
   // Bounce the ball off the top, paddle, or hit the bottom of the canvas
-  if (ball.y + ball.dy < ballRadius) {
+  if (ball.y + ball.dy < ball.radius) {
     // hit the top
     ball.dy = -ball.dy;
-  } else if (ball.y + ball.dy > canvasHeight - ballRadius) {
+  } else if (ball.y + ball.dy > canvasHeight - ball.radius) {
     // hit the bottom
     if (ball.x > paddleX && ball.x < paddleX + paddleWidth) {
       // Hit the paddle
@@ -211,12 +209,12 @@ function draw() {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   // Call helper functions
   drawBricks();
-  drawBall();
+  ball.draw(ctx);
   drawPaddle();
   drawScore();
   drawLives();
   collisionDetection();
-  moveBall();
+  ball.move();
   movePaddle();
   collisionsWithCanvasAndPaddle();
 
@@ -264,3 +262,34 @@ document.addEventListener('mousemove', mouseMoveHandler, false);
 // **************************************************************
 
 draw();
+
+
+/* CLASS Ball {
+  contructor() {
+    this.x = 0
+    this.y = 0
+    this dy = 2
+    this.radius = 10
+  }
+  const ball = new Ball()
+
+}
+
+class Brick() {
+  contructor(x, y, color = 'orange') {
+    this.x = x;
+    this.y = y;
+    this.status = 1;
+    this.color = color;
+    this.width = brickWidth
+    this.height = brickHeight
+  }
+  depenceny injection
+  render(ctx) {
+    ctx.beginPath()
+    xtx.rect(this.x, this.y, this.width, this.height)
+  }
+}
+
+
+*/
