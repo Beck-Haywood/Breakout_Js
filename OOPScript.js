@@ -31,26 +31,33 @@ const fontDefault = '16px Arial';
 // **************************************************************
 // Classes
 // **************************************************************
-
-class Ball {
-  constructor(
-    x = 0,
-    y = 0,
-    dx = 2,
-    dy = -1,
-    radius = ballRadius,
-    color = objectColor,
-  ) {
+class Sprite {
+  constructor(x = 0, y = 0, dx, dy, width = 10, height = 10, color = objectColor) {
     this.x = x;
     this.y = y;
     this.dx = dx;
     this.dy = dy;
-    this.radius = radius;
+    this.width = width;
+    this.height = height;
     this.color = color;
   }
   move() {
     this.x += this.dx;
     this.y += this.dy;
+  }
+  render(ctx) {
+    ctx.beginPath();
+    ctx.rect(this.x, this.y, this.width, this.height);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.closePath();
+  }
+}
+
+class Ball extends Sprite {
+  constructor(x, y, dx = 2, dy = -1, radius = ballRadius, color) {
+    super(x, y, dx, dy, 0, 0, color);
+    this.radius = radius;
   }
   render(ctx) {
     ctx.beginPath();
@@ -61,7 +68,7 @@ class Ball {
   }
 }
 
-class Brick {
+class Brick extends Sprite {
   constructor(
     x,
     y,
@@ -69,19 +76,8 @@ class Brick {
     width = brickWidth,
     height = brickHeight,
   ) {
-    this.x = x;
-    this.y = y;
+    super(x, y, 0, 0, width, height, color);
     this.status = 1;
-    this.color = color;
-    this.width = width;
-    this.height = height;
-  }
-  render(ctx) {
-    ctx.beginPath();
-    ctx.rect(this.x, this.y, this.width, this.height);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-    ctx.closePath();
   }
 }
 
@@ -118,13 +114,9 @@ class Bricks {
 
 const bricks = new Bricks();
 
-class Paddle {
-  constructor(x = 0, color = objectColor, width = paddleWidth, height = paddleHeight) {
-    this.x = x;
-    this.height = height;
-    this.y = canvasHeight - this.height;
-    this.color = color;
-    this.width = width;
+class Paddle extends Sprite {
+  constructor(x = 0, y = canvasHeight - paddleHeight, color = objectColor, width = paddleWidth, height = paddleHeight) {
+    super(x, y, 0, 0, width, height, color);
   }
   move() {
     // Check for arrow keys
@@ -133,13 +125,6 @@ class Paddle {
     } else if (leftPressed && paddle.x > 0) {
         paddle.x -= 7;
     }
-  }
-  render(ctx) {
-    ctx.beginPath();
-    ctx.rect(this.x, this.y, this.width, this.height);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-    ctx.closePath();
   }
 }
 
@@ -150,11 +135,9 @@ class Background {
   render(ctx) {}
 }
 
-class Score {
+class Score extends Sprite {
   constructor(x, y, color = objectColor, score = 0, font = fontDefault) {
-    this.x = x;
-    this.y = y;
-    this.color = color;
+    super(x, y, 0, 0, 0, 0, color);
     this.score = score;
     this.font = font;
   }
@@ -163,16 +146,12 @@ class Score {
     ctx.fillStyle = this.color;
     ctx.fillText(`Score: ${this.score}`, 8, 20);
   }
-  update(score) {}
-  reset() {}
 }
 
-class Lives {
+class Lives extends Sprite {
   constructor(x, y, font = fontDefault, color = objectColor, lives = 3) {
-    this.x = x;
-    this.y = y;
+    super(x, y, 0, 0, 0, 0, color);
     this.font = font;
-    this.color = color;
     this.lives = lives;
   }
   render(ctx) {
@@ -180,8 +159,6 @@ class Lives {
     ctx.fillStyle = this.color;
     ctx.fillText(`Lives: ${this.lives}`, canvasWidth - 65, 20);
   }
-  loseLife() {}
-  reset() {}
 }
 //   draw(canvasContext) {
 //     canvasContext.beginPath();
